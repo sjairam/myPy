@@ -6,12 +6,13 @@ import os
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-#Check AWS command installsed
-def check_aws_cli():
-    aws = os.system("command -v aws > /dev/null 2>&1")
-    if aws != 0:
-        print("ERROR: The aws binary does not exist.")
-        print("FIX: Please install the AWS CLI or ensure it is available in your PATH.")
+#Check commands are available
+def check_command_availability(command_name):
+    if not os.system(f"command -v {command_name} > /dev/null 2>&1"):
+        return True
+    else:
+        print(f"ERROR: Unable to locate the {command_name} binary.")
+        print(f"FIX: Please make sure the {command_name} utility is installed and available in PATH.")
         sys.exit(1)
 
 def list_running_instances():
@@ -46,7 +47,9 @@ def main():
     clear_screen()
 
     # Check if AWS CLI is available
-    check_aws_cli()
+    required_commands = ['aws', 'cat']
+    for command in required_commands:
+        check_command_availability(command)
 
     # List running EC2 instances
     list_running_instances()
